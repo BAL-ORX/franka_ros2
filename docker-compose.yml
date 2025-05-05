@@ -11,12 +11,13 @@ services:
     privileged: true
     command: /bin/bash
     tty: true
-    stdin_open: true
+    stdin_open: true   
     volumes:
       - ./:/ros2_ws/src
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./limits.conf:/etc/security/limits.conf
       - /dev:/dev
+      - "/home/jonas/Bachelor Thesis/realsense_pictures:/home/user/Bachelor Thesis/realsense_pictures"
     environment:
       QT_X11_NO_MITSHM: 1
       DISPLAY: $DISPLAY
