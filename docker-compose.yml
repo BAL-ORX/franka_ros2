@@ -19,6 +19,8 @@ services:
       - /dev:/dev
       - "/home/jonas/Bachelor Thesis/realsense_pictures:/home/user/Bachelor Thesis/realsense_pictures"
       - "/home/jonas/Bachelor Thesis/smplifyx-and-openpose-containers/data/images:/home/user/Bachelor Thesis/smplifyx-and-openpose-containers/data/images"
+      - "/home/jonas/Bachelor Thesis/smplifyx-and-openpose-containers:/home/user/Bachelor Thesis/smplifyx-and-openpose-containers"
+      - "/home/jonas/smplifyx_data:/home/user/smplifyx_data"
     environment:
       QT_X11_NO_MITSHM: 1
       DISPLAY: $DISPLAY
