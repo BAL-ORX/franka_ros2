@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'send_goal = goal_client.send_goal:main'
+            'send_goal = goal_client.send_goal:main',
+            'home_camera = goal_client.home_camera:main',
         ],
     },
 )

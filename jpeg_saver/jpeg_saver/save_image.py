@@ -3,52 +3,47 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import CompressedImage
 
-class JpegSaver(Node):
-    def __init__(self):
-        super().__init__('jpeg_saver')
-        self.latest = None
 
-        # subscribe to the compressed JPEG topic
+class OneShotSaver(Node):
+    def __init__(self):
+        super().__init__("jpeg_saver")
+
+        # Subscribe once; the first callback will save and shut down.
         self.create_subscription(
             CompressedImage,
-            '/camera/camera/color/image_rect_raw/compressed',
-            self.cb_compressed,
-            10)
+            "/camera/camera/color/image_rect_raw/compressed",
+            self.save_and_quit,
+            1,   # queue depth 1
+        )
 
-        # one-shot timer: after 2 seconds, call save_and_exit()
-        self.create_timer(2.0, self.save_and_exit)
+    # ───────────────────── callback ──────────────────────
+    def save_and_quit(self, msg: CompressedImage):
+        # build ~/Bachelor Thesis/realsense_pictures/
+        folder = os.path.join(
+            os.path.expanduser("~"),
+            "Bachelor Thesis",
+            "realsense_pictures",
+        )
+        os.makedirs(folder, exist_ok=True)
 
-    def cb_compressed(self, msg: CompressedImage):
-        # store the most recent frame
-        self.latest = msg
-
-    def save_and_exit(self):
-        if self.latest is None:
-            self.get_logger().warn('No compressed image received yet')
-            return
-
-        # build the output folder with a space in its name
-        home = os.path.expanduser('~')   # → '/home/user'
-        out_dir = os.path.join(home,
-                       'Bachelor Thesis',
-                       'realsense_pictures')
-
-        os.makedirs(out_dir, exist_ok=True)
-
-        # filename with timestamp
+        # timestamped filename
         ts = self.get_clock().now().nanoseconds
-        path = os.path.join(out_dir, f'color_{ts}.jpg')
+        path = os.path.join(folder, f"color_{ts}.jpg")
 
-        # dump the raw JPEG bytes
-        with open(path, 'wb') as f:
-            f.write(self.latest.data)
+        # write raw JPEG bytes
+        with open(path, "wb") as f:
+            f.write(msg.data)
 
-        self.get_logger().info(f'Saved JPEG to {path}')
-        rclpy.shutdown()
+        self.get_logger().info(f"Saved JPEG to {path}")
+        rclpy.shutdown()          # stops spin(), process exits
+
 
 def main(args=None):
     rclpy.init(args=args)
-    node = JpegSaver()
+    node = OneShotSaver()
     rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    # spin() returns after rclpy.shutdown() was called in save_and_quit
+
+
+if __name__ == "__main__":
+    main()
