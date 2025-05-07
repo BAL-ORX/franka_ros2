@@ -24,6 +24,7 @@ RUN apt-get update && \
         python3-colcon-common-extensions \
         sudo \
         vim \
+        docker.io \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -32,7 +33,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc \
-    && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /home/$USERNAME/.bashrc
+    && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /home/$USERNAME/.bashrc \
+    && usermod -aG docker $USERNAME
     
 USER $USERNAME
 
