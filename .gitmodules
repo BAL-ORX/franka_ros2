@@ -1,3 +1,3 @@
 [submodule "moveit_interface"]
 	path = moveit_interface
-	url = git@github.com:BAL-ORX/moveit_interface.git
+	url = ../moveit_interface.git
